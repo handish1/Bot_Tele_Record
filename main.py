@@ -8,16 +8,13 @@ from telegram.ext import (
     filters, ContextTypes, ConversationHandler
 )
 
-# Logging
 logging.basicConfig(level=logging.INFO)
 
-# Bot Token dari environment variable
+# Gunakan token dari environment variable
 TOKEN = os.getenv("BOT_TOKEN")
 
-# State
 LINK, RESOLUTION, DURATION = range(3)
 
-# Tombol
 main_keyboard = ReplyKeyboardMarkup([
     [KeyboardButton("Mulai Rekaman")],
     [KeyboardButton("Bantuan")]
@@ -29,7 +26,6 @@ res_keyboard = ReplyKeyboardMarkup([
     ["1080p"]
 ], resize_keyboard=True)
 
-# Commands dan logic bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     username = update.effective_user.first_name or "pengguna"
     await update.message.reply_text(
@@ -61,8 +57,11 @@ async def get_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_resolution(update: Update, context: ContextTypes.DEFAULT_TYPE):
     resolution_map = {
-        "240p": "400k", "360p": "800k", "480p": "1M",
-        "720p": "2M", "1080p": "3M"
+        "240p": "400k",
+        "360p": "800k",
+        "480p": "1M",
+        "720p": "2M",
+        "1080p": "3M"
     }
     res = update.message.text
     if res not in resolution_map:
@@ -107,7 +106,6 @@ async def get_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
         os.remove("output.mp4")
     except Exception:
         await update.message.reply_text("Host sedang tidak aktif atau link bermasalah.")
-
     return ConversationHandler.END
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
