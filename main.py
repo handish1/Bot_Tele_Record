@@ -1,31 +1,32 @@
 import os
+import sys
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from keep_alive import keep_alive
 
-# Ambil token dari environment variable di Replit
+# Ambil token dari Secrets
 TOKEN = os.environ.get("BOT_TOKEN")
 
-# Handler untuk perintah /start
+if not TOKEN:
+    print("Error: BOT_TOKEN belum diatur di Secrets Replit!")
+    sys.exit(1)  # Hentikan program
+
+# Handler /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Halo! Bot kamu berhasil dijalankan di Replit.")
 
-# Handler untuk perintah /help
+# Handler /help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Perintah yang tersedia:\n/start - Mulai bot\n/help - Bantuan")
+    await update.message.reply_text("Perintah:\n/start - Mulai\n/help - Bantuan")
 
-# Fungsi utama
+# Main
 if __name__ == '__main__':
-    keep_alive()  # Menjaga Replit tetap hidup dengan server Flask
+    keep_alive()
 
-    # Bangun aplikasi bot Telegram
     app = ApplicationBuilder().token(TOKEN).build()
 
-    # Tambahkan handler ke aplikasi
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
 
-    print("Bot berjalan di Replit...")
-
-    # Jalankan polling bot
+    print("Bot sedang berjalan...")
     app.run_polling()
